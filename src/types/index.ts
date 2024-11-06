@@ -8,28 +8,41 @@ export interface Ingredient {
 export interface SubrecipeIngredient {
   ingredientId: number;
   quantity: number;
+  ingredient: Ingredient;
+}
+
+export interface SubrecipeChild {
+  subRecipeId: number;
+  quantity: number;
+  subRecipe: Subrecipe;
 }
 
 export interface Subrecipe {
   id: number;
   name: string;
+  yield: number;
   totalCost: number;
   ingredients: SubrecipeIngredient[];
+  subRecipes?: SubrecipeChild[];
 }
 
 export interface RecipeIngredient {
   ingredientId: number;
   quantity: number;
+  ingredient: Ingredient;
 }
 
 export interface RecipeSubrecipe {
-  subrecipeId: number;
+  subRecipeId: number;
   quantity: number;
+  subRecipe: Subrecipe;
 }
 
 export interface Recipe {
   id: number;
   name: string;
+  salePrice: number;
+  foodCostPercentage: number;
   totalCost: number;
   ingredients: RecipeIngredient[];
   subRecipes: RecipeSubrecipe[];
@@ -41,6 +54,7 @@ export interface Product {
   isFinishedProduct: boolean;
   purchasePrice?: number;
   recipeId?: number;
+  recipe?: Recipe;
 }
 
 export interface Expense {

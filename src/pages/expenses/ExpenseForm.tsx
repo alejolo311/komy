@@ -25,15 +25,17 @@ import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 
 const schema = z.object({
-  amount: z.string().min(1, 'Amount is required'),
-  type: z.enum(['OPERATIVE', 'PERSONNEL', 'FOOD_COST']),
-  date: z.string().min(1, 'Date is required'),
+  amount: z.string().min(1, 'El monto es requerido'),
+  type: z.enum(['OPERATIVE', 'PERSONNEL', 'FOOD_COST'], {
+    required_error: 'El tipo es requerido',
+  }),
+  date: z.string().min(1, 'La fecha es requerida'),
 });
 
 const expenseTypes = [
-  { value: 'OPERATIVE', label: 'Operative' },
-  { value: 'PERSONNEL', label: 'Personnel' },
-  { value: 'FOOD_COST', label: 'Food Cost' },
+  { value: 'OPERATIVE', label: 'Operativo' },
+  { value: 'PERSONNEL', label: 'Personal' },
+  { value: 'FOOD_COST', label: 'Costo de Alimentos' },
 ];
 
 export function ExpenseForm() {
@@ -67,7 +69,7 @@ export function ExpenseForm() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to load expense',
+        description: 'Error al cargar el gasto',
         variant: 'destructive',
       });
       navigate('/expenses');
@@ -89,100 +91,115 @@ export function ExpenseForm() {
       }
 
       toast({
-        title: 'Success',
-        description: `Expense ${id ? 'updated' : 'created'} successfully`,
+        title: 'Éxito',
+        description: `Gasto ${id ? 'actualizado' : 'creado'} correctamente`,
       });
       navigate('/expenses');
     } catch (error) {
       toast({
         title: 'Error',
-        description: `Failed to ${id ? 'update' : 'create'} expense`,
+        description: `Error al ${id ? 'actualizar' : 'crear'} el gasto`,
         variant: 'destructive',
       });
     }
   }
 
   return (
-    <div className="container max-w-2xl py-6">
-      <h1 className="mb-6 text-3xl font-bold">
-        {id ? 'Edit' : 'New'} Expense
+    <div className="container max-w-2xl mx-auto py-6">
+      <h1 className="mb-8 text-4xl font-bold text-gray-900">
+        {id ? 'Editar' : 'Nuevo'} Gasto
       </h1>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    step="0.01"
-                    min="0"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+      <div className="rounded-lg border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-200">Monto</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select expense type" />
-                    </SelectTrigger>
+                    <Input
+                      {...field}
+                      type="number"
+                      step="1"
+                      min="0"
+                      className="bg-gray-800 border-gray-700 text-white"
+                      placeholder="Ingrese el monto"
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {expenseTypes.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Date</FormLabel>
-                <FormControl>
-                  <Input {...field} type="date" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-200">Tipo</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                        <SelectValue placeholder="Seleccione el tipo de gasto" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-gray-800 border-gray-700">
+                      {expenseTypes.map((type) => (
+                        <SelectItem
+                          key={type.value}
+                          value={type.value}
+                          className="text-gray-200 focus:bg-gray-700 focus:text-white"
+                        >
+                          {type.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="flex justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/expenses')}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Save</Button>
-          </div>
-        </form>
-      </Form>
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-200">Fecha</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="date"
+                      className="bg-gray-800 border-gray-700 text-white"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/expenses')}
+                className="border-gray-700 text-gray-200 hover:bg-gray-800 hover:text-white"
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" className="bg-green-600 hover:bg-green-700">
+                Guardar
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }

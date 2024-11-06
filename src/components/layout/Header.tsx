@@ -11,32 +11,36 @@ import { MainNav } from './MainNav';
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 hidden md:flex">
-          <a className="mr-6 flex items-center space-x-2" href="/">
-            <span className="hidden font-bold sm:inline-block">Komy</span>
-          </a>
-          <MainNav />
-        </div>
+    <header className="fixed top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur dark:border-gray-800 dark:bg-gray-900/80">
+      <div className="flex h-16 items-center px-4 md:px-8">
         <Sheet>
           <SheetTrigger asChild>
             <Button
               variant="ghost"
-              className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+              className="mr-4 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
             >
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="pr-0">
-            <MainNav />
+          <SheetContent side="left" className="w-[240px] bg-white p-0 dark:bg-gray-900">
+            <div className="flex flex-col gap-6 p-4">
+              <div className="flex items-center gap-2">
+                <span className="font-bold">Komy</span>
+              </div>
+              <MainNav />
+            </div>
           </SheetContent>
         </Sheet>
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-            {/* Add search here if needed */}
-          </div>
+
+        <div className="hidden md:flex md:items-center md:gap-6">
+          <a href="/" className="font-bold">
+            Komy
+          </a>
+          <MainNav className="flex-row gap-1" />
+        </div>
+
+        <div className="flex flex-1 items-center justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -49,7 +53,7 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>No new notifications</DropdownMenuItem>
+              <DropdownMenuItem>No hay notificaciones nuevas</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

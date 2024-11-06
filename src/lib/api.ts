@@ -130,7 +130,25 @@ export const api = {
 
   // Analytics
   analytics: {
-    expensePercentages: () => fetchApi('/analytics/expense-percentages'),
-    incomeVsExpenses: () => fetchApi('/analytics/income-vs-expenses'),
+    getTotalSales: (startDate?: string, endDate?: string) =>
+      fetchApi('/analytics/total-sales', {
+        method: 'GET',
+        params: { startDate, endDate },
+      }),
+    getTotalExpenses: (startDate?: string, endDate?: string) =>
+      fetchApi('/analytics/total-expenses', {
+        method: 'GET',
+        params: { startDate, endDate },
+      }),
+    getExpensesByType: (startDate?: string, endDate?: string) =>
+      fetchApi('/analytics/expenses-by-type', {
+        method: 'GET',
+        params: { startDate, endDate },
+      }),
+    getExpensePercentages: (startDate?: string, endDate?: string) =>
+      fetchApi('/analytics/expense-percentages', {
+        method: 'GET',
+        params: { startDate, endDate },
+      }),
   },
 };

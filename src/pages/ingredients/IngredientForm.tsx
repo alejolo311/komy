@@ -24,12 +24,18 @@ import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 
 const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  price: z.string().min(1, 'Price is required'),
-  unit: z.string().min(1, 'Unit is required'),
+  name: z.string().min(1, 'El nombre es requerido'),
+  price: z.string().min(1, 'El precio es requerido'),
+  unit: z.string().min(1, 'La unidad es requerida'),
 });
 
-const units = ['kg', 'g', 'l', 'ml', 'unit'];
+const units = [
+  { value: 'kg', label: 'Kilogramos' },
+  { value: 'g', label: 'Gramos' },
+  { value: 'l', label: 'Litros' },
+  { value: 'ml', label: 'Mililitros' },
+  { value: 'unit', label: 'Unidad' },
+];
 
 export function IngredientForm() {
   const navigate = useNavigate();
@@ -61,7 +67,7 @@ export function IngredientForm() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to load ingredient',
+        description: 'Error al cargar el ingrediente',
         variant: 'destructive',
       });
       navigate('/ingredients');
@@ -82,100 +88,115 @@ export function IngredientForm() {
       }
 
       toast({
-        title: 'Success',
-        description: `Ingredient ${id ? 'updated' : 'created'} successfully`,
+        title: 'Éxito',
+        description: `Ingrediente ${id ? 'actualizado' : 'creado'} correctamente`,
       });
       navigate('/ingredients');
     } catch (error) {
       toast({
         title: 'Error',
-        description: `Failed to ${id ? 'update' : 'create'} ingredient`,
+        description: `Error al ${id ? 'actualizar' : 'crear'} el ingrediente`,
         variant: 'destructive',
       });
     }
   }
 
   return (
-    <div className="container max-w-2xl py-6">
-      <h1 className="mb-6 text-3xl font-bold">
-        {id ? 'Edit' : 'New'} Ingredient
+    <div className="container max-w-2xl mx-auto py-6">
+      <h1 className="mb-8 text-4xl font-bold text-gray-900">
+        {id ? 'Editar' : 'Nuevo'} Ingrediente
       </h1>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Price</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="number"
-                    step="0.01"
-                    min="0"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="unit"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Unit</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
+      <div className="rounded-lg border border-gray-700 bg-gray-800/50 backdrop-blur-sm p-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-200">Nombre</FormLabel>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a unit" />
-                    </SelectTrigger>
+                    <Input
+                      {...field}
+                      className="bg-gray-800 border-gray-700 text-white"
+                      placeholder="Ingrese el nombre del ingrediente"
+                    />
                   </FormControl>
-                  <SelectContent>
-                    {units.map((unit) => (
-                      <SelectItem key={unit} value={unit}>
-                        {unit}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div className="flex justify-end gap-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/ingredients')}
-            >
-              Cancel
-            </Button>
-            <Button type="submit">Save</Button>
-          </div>
-        </form>
-      </Form>
+            <FormField
+              control={form.control}
+              name="price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-200">Precio</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      step="1"
+                      min="0"
+                      className="bg-gray-800 border-gray-700 text-white"
+                      placeholder="Ingrese el precio"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="unit"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-200">Unidad</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                        <SelectValue placeholder="Seleccione una unidad" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-gray-800 border-gray-700">
+                      {units.map((unit) => (
+                        <SelectItem
+                          key={unit.value}
+                          value={unit.value}
+                          className="text-gray-200 focus:bg-gray-700 focus:text-white"
+                        >
+                          {unit.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex justify-end gap-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/ingredients')}
+                className="border-gray-700 text-gray-200 hover:bg-gray-800 hover:text-white"
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" className="bg-green-600 hover:bg-green-700">
+                Guardar
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 }

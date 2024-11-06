@@ -12,21 +12,23 @@ import {
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Ingredients', href: '/ingredients', icon: CookingPot },
-  { name: 'Subrecipes', href: '/subrecipes', icon: ChefHat },
-  { name: 'Recipes', href: '/recipes', icon: Receipt },
-  { name: 'Products', href: '/products', icon: Sandwich },
-  { name: 'Expenses', href: '/expenses', icon: Package },
-  { name: 'Income', href: '/income', icon: DollarSign },
-  { name: 'Analytics', href: '/analytics', icon: LineChart },
+  { name: 'Ingredientes', href: '/ingredients', icon: CookingPot },
+  { name: 'Subrecetas', href: '/subrecipes', icon: ChefHat },
+  { name: 'Recetas', href: '/recipes', icon: Receipt },
+  { name: 'Gastos', href: '/expenses', icon: Package },
+  { name: 'Ingresos', href: '/income', icon: DollarSign },
+  { name: 'Reportes', href: '/reports', icon: LineChart },
 ];
 
-export function MainNav() {
+interface MainNavProps {
+  className?: string;
+}
+
+export function MainNav({ className }: MainNavProps) {
   const location = useLocation();
 
   return (
-    <nav className="flex flex-col gap-2">
+    <nav className={cn('flex flex-col md:flex-row gap-1', className)}>
       {navigation.map((item) => {
         const Icon = item.icon;
         return (
@@ -34,13 +36,14 @@ export function MainNav() {
             key={item.name}
             to={item.href}
             className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50',
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-600 transition-all hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100',
               location.pathname === item.href &&
-                'bg-green-50 text-green-700 dark:bg-green-900/50 dark:text-green-50'
+              'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+              'md:px-4 md:py-2'
             )}
           >
             <Icon className="h-4 w-4" />
-            {item.name}
+            <span className="md:hidden lg:inline">{item.name}</span>
           </Link>
         );
       })}
