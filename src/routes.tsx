@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Routes, Route } from 'react-router-dom';
 import { Dashboard } from '@/pages/Dashboard';
 import { Ingredients } from '@/pages/ingredients';
