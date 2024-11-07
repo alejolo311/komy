@@ -7,11 +7,12 @@ import { Recipes } from '@/pages/recipes';
 import { Expenses } from '@/pages/expenses';
 import { Income } from '@/pages/income';
 import { Analytics } from '@/pages/analytics';
+import { Landing } from '@/pages/Landing';
 
 export function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Recipes />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/ingredients/*" element={<Ingredients />} />
       <Route path="/subrecipes/*" element={<Subrecipes />} />
       <Route path="/recipes/*" element={<Recipes />} />

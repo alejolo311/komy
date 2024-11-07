@@ -1,5 +1,5 @@
 // @ts-nocheck
-const API_BASE_URL = 'https://komy-api.caidosdelzarzo.com/api/v1';
+const API_BASE_URL = 'http://localhost/api/v1';
 
 export async function fetchApi<T>(
   endpoint: string,
