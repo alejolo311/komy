@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Edit2, Eye, Trash2 } from 'lucide-react';
+import { Edit2, Eye, Trash2, ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { PageHeader } from '@/components/shared/page-header';
@@ -10,6 +10,7 @@ import { RecipeDetails } from '@/components/recipes/RecipeDetails';
 import { useToast } from '@/components/ui/use-toast';
 import { api } from '@/lib/api';
 import type { Recipe } from '@/types';
+import type { ColumnDef } from '@tanstack/react-table';
 
 const formatCOP = (value: number) => {
   return new Intl.NumberFormat('es-CO', {
@@ -20,12 +21,17 @@ const formatCOP = (value: number) => {
   }).format(value);
 };
 
+const formatPercentage = (value: number) => {
+  return value.toFixed(1) + '%';
+};
+
 export function RecipeList() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [sorting, setSorting] = useState([{ id: 'name', desc: false }]);
 
   useEffect(() => {
     loadRecipes();
@@ -62,17 +68,29 @@ export function RecipeList() {
     }
   }
 
-  const columns = [
+  const columns: ColumnDef<Recipe>[] = [
     {
       accessorKey: 'name',
-      header: 'Nombre',
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          Nombre
+          <Button
+            variant="ghost"
+            size="sm"
+            className="-ml-3 h-8 hover:bg-gray-700"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
     },
     {
       accessorKey: 'totalCost',
       header: 'Costo Total',
       cell: ({ row }) => (
         <span className="text-green-500 font-medium">
-          {formatCOP(row.original.totalCost)}
+          {formatCOP(row.getValue('totalCost'))}
         </span>
       ),
     },
@@ -81,18 +99,63 @@ export function RecipeList() {
       header: 'Precio de Venta',
       cell: ({ row }) => (
         <span className="font-medium">
-          {formatCOP(row.original.salePrice)}
+          {formatCOP(row.getValue('salePrice'))}
         </span>
       ),
     },
     {
       accessorKey: 'foodCostPercentage',
-      header: 'Food Cost',
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          Food Cost Objetivo
+          <Button
+            variant="ghost"
+            size="sm"
+            className="-ml-3 h-8 hover:bg-gray-700"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
       cell: ({ row }) => (
-        <span className={row.original.foodCostPercentage > 35 ? 'text-red-500' : ''}>
-          {row.original.foodCostPercentage}%
+        <span className={row.getValue('foodCostPercentage') > 35 ? 'text-red-500' : ''}>
+          {formatPercentage(row.getValue('foodCostPercentage'))}
         </span>
       ),
+    },
+    {
+      id: 'realFoodCost',
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          Food Cost Real
+          <Button
+            variant="ghost"
+            size="sm"
+            className="-ml-3 h-8 hover:bg-gray-700"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            <ArrowUpDown className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+      accessorFn: (row) => (row.totalCost / row.salePrice) * 100,
+      cell: ({ row }) => {
+        const realFoodCost = (row.original.totalCost / row.original.salePrice) * 100;
+        const difference = realFoodCost - row.original.foodCostPercentage;
+        return (
+          <div className="space-y-1">
+            <span className={realFoodCost > 35 ? 'text-red-500' : ''}>
+              {formatPercentage(realFoodCost)}
+            </span>
+            {Math.abs(difference) >= 0.1 && (
+              <span className={`text-xs block ${difference > 0 ? 'text-red-400' : 'text-green-400'}`}>
+                {difference > 0 ? '+' : ''}{formatPercentage(difference)}
+              </span>
+            )}
+          </div>
+        );
+      },
     },
     {
       id: 'actions',
@@ -141,6 +204,8 @@ export function RecipeList() {
           columns={columns}
           data={recipes}
           className="text-gray-200"
+          sorting={sorting}
+          onSortingChange={setSorting}
         />
       </div>
 
